@@ -1,7 +1,11 @@
 import { ProductsRepository } from '../repositories/products.repository.js';
 
+
+
 export class ProductsService {
-  productsRepository = new ProductsRepository();
+  constructor() {
+    this.productsRepository = new ProductsRepository();
+  }
 
   findAllProducts = async () => {
     const products = await this.productsRepository.findAllProducts();
@@ -23,34 +27,11 @@ export class ProductsService {
     });
   };
 
-  //인자로 받는다.
-  createProducts = async (nickname, password, title, content) => {
-    const createdProduct = await this.productsRepository.createProduct(
-      nickname,
-      password,
-      title,
-      content,
-    );
+  createOne = async ({title, userId, description, userName}) => {
+    const product = await this.productsRepository.createOne(title, description, userId);
 
-    // 비번 빼고 보여주기
-    return {
-      productId: createdProduct.productId,
-      nickname: createdProduct.nickname,
-      title: createdProduct.title,
-      content: createdProduct.content,
-      createdAt: createdProduct.createdAt,
-      updatedAt: createdProduct.updatedAt,
-    };
+    return { ...product, userName };
   };
 
-  findOneProduct = async (productId) => {
-    const product = await this.productsRepository.findOneProducts(productId);
-  return {
-    productId: product.productId,
-    nickname: product.nickname,
-    title: product.title,
-    createdAt: product.createdAt,
-    updatedAt: product.updatedAt,
-  }
-};
+  
 }
