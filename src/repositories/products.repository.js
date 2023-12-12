@@ -1,5 +1,6 @@
 import db from '../../models/index.cjs';
 import { Sequelize } from 'sequelize';
+import * as HttpStatus from '../errors/http-status.error.js';
 const { Products, Users } = db;
 
 export class ProductsRepository {
@@ -43,6 +44,29 @@ export class ProductsRepository {
       include: { model: Users, as: 'user', attributes: [] },
     });
 
+    if (!product) {
+      throw new HttpStatus.NotFound('상품 조회에 실패했습니다.');
+    }
+
     return product?.toJSON();
   };
+
+  updateOneById = async(id, {title, description,status}) => {
+    const product = await Products.findByPk(id);
+
+    if (!product) {
+      throw new HttpStatus.NotFound('상품 조회에 실패했습니다.');
+    }
+
+    const updatedProduct = await product.update(
+      {
+        ...(title && { title }),
+        ...(description && { description }),
+        ...(status && { status }),
+      },
+      { where: { id } },
+    );
+
+    return updatedProduct.toJSON();
+  }
 }
