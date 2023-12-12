@@ -129,9 +129,35 @@ export class ProductsController {
       });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({
+      const statusCode = error.statusCode ?? 500;
+      const message = error.message ?? '예상치 못한 에러가 발생하였습니다. 관리자에게 문의하세요.';
+      return res.status(statusCode).json({
         success: false,
-        message: '예상치 못한 에러가 발생하였습니다. 관리자에게 문의하세요.',
+        message,
+      });
+    }
+  };
+
+  deleteOne = async (req, res) => {
+    try {
+      const { productId } = req.params;
+      const { id: userId, name: userName } = res.locals.user;
+  
+      
+      const data = await this.productsService.deleteOne({userId, userName, id:productId});
+  
+      return res.status(200).json({
+        success: true,
+        message: '상품 삭제에 성공했습니다.',
+        data,
+      });
+    } catch (error) {
+      console.error(error);
+      const statusCode = error.statusCode ?? 500;
+      const message = error.message ?? '예상치 못한 에러가 발생하였습니다. 관리자에게 문의하세요.';
+      return res.status(statusCode).json({
+        success: false,
+        message,
       });
     }
   };

@@ -68,5 +68,17 @@ export class ProductsRepository {
     );
 
     return updatedProduct.toJSON();
-  }
+  };
+
+  deleteOneById = async(id) => {
+    const product = await Products.findByPk(id);
+
+    if (!product) {
+      throw new HttpStatus.NotFound('상품 조회에 실패했습니다.');
+    }
+
+    const deletedProduct = await product.destroy({ where: { id } });
+
+    return deletedProduct.toJSON();
+  };
 }

@@ -41,5 +41,18 @@ export class ProductsService {
     return {...updatedProduct , userName};
   };
 
- 
+ deleteOne = async ({userId, userName, id}) => {
+  // 일치하는 상품이 존재하지 않는 경우
+  const product = await this.productsRepository.readOneById(id);
+
+  // 작성자ID와 인증 정보의 사용자ID가 다른 경우
+  const isProductOwner = product.userId === userId;
+  if (!isProductOwner) {
+    throw new HttpStatus.Forbidden('상품 삭제 권한이 없습니다.');
+  }
+
+  const deletedProduct= await this.productsRepository.deleteOneById(id);
+
+  return {deletedProduct, userName};
+ };
 }
