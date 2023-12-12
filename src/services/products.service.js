@@ -1,6 +1,5 @@
 import { ProductsRepository } from '../repositories/products.repository.js';
-
-
+import * as HttpStatus from '../errors/http-status.error.js';
 
 export class ProductsService {
   constructor() {
@@ -20,5 +19,15 @@ export class ProductsService {
     return { ...product, userName };
   };
 
-  
+  readOne = async ({id}) => {
+    
+    const product = await this.productsRepository.readOneById({id});
+
+    if (!product) {
+      throw new HttpStatus.NotFound('상품 조회에 실패했습니다.');
+    }
+
+    return product;
+  };
+
 }

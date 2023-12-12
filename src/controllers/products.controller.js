@@ -71,4 +71,27 @@ export class ProductsController {
       });
     }
   };
+
+  readOne = async (req, res) => {
+    try {
+      const { productId } = req.params;
+  
+      const product = await this.productsService.readOne({id: productId});
+  
+      return res.status(200).json({
+        success: true,
+        message: '상품 목록 조회에 성공했습니다.',
+        data: product,
+      });
+    } catch (error) {
+      console.error(error);
+
+      const statusCode = error.statusCode ?? 500;
+      const message = error.message ?? '예상치 못한 에러가 발생하였습니다. 관리자에게 문의하세요.';
+      return res.status(statusCode).json({
+        success: false,
+        message,
+      });
+    }
+  }
 }
