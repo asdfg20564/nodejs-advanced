@@ -7,25 +7,12 @@ export class ProductsService {
     this.productsRepository = new ProductsRepository();
   }
 
-  findAllProducts = async () => {
-    const products = await this.productsRepository.findAllProducts();
+  readMany = async({sort}) => {
+    
+    const products = await this.productsRepository.readMany({sort});
 
-    // 정렬
-    products.sort((a, b) => {
-      return b.createdAt - a.createdAt;
-    });
-
-    // map으로 가공
-    return products.map((product) => {
-      return {
-        productId: product.productId,
-        nickname: product.nickname,
-        title: product.title,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
-      };
-    });
-  };
+    return products;
+  }
 
   createOne = async ({title, userId, description, userName}) => {
     const product = await this.productsRepository.createOne(title, description, userId);

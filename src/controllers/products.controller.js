@@ -8,21 +8,13 @@ export class ProductsController {
     this.productsService = new ProductsService();
   }
   
-  getProducts = async (req, res, next) => {
-    try {
-      const products = await this.productsService.findAllProducts();
-
-      return res.status(200).json({ data: products });
-    } catch (err) {
-      next(err);
-    }
-  };
 
   createOne = async (req, res) => {
     try {
       const { id: userId, name: userName } = res.locals.user;
       const { title, description } = req.body;
   
+      //유효성 검사
       if (!title) {
         return res.status(400).json({
           success: false,
@@ -42,6 +34,33 @@ export class ProductsController {
       return res.status(201).json({
         success: true,
         message: '상품 생성에 성공했습니다.',
+        data,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: '예상치 못한 에러가 발생하였습니다. 관리자에게 문의하세요.',
+      });
+    }
+  };
+
+  readMany = async (req, res) => {
+    try {
+      const { sort } = req.query;
+      let upperCaseSort = sort?.toUpperCase();
+  
+      if (upperCaseSort !== 'ASC' && upperCaseSort !== 'DESC') {
+        upperCaseSort = 'DESC';
+      }
+  
+      const data = await this.productsService.readMany({
+        sort: upperCaseSort,
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: '상품 목록 조회에 성공했습니다.',
         data,
       });
     } catch (error) {
